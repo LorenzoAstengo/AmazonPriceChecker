@@ -85,9 +85,18 @@ def deleteProduct(products):
     l.write(str(datetime.now())+" Deleted a product: "+str(p.name)+"\n")
     l.close()
 
-def changeRefTime(REFRESH_TIME):
+def changeRefTime():
+    d=open(USER_DATA_PATH,'r')
+    REFRESH_TIME=d.readline()
+    data = str(d.read())    
+    d.close()
     print("Actual refresh time: "+str(REFRESH_TIME))
     REFRESH_TIME=int(input("Insert desired refresh time (in sec.): "))
+    d=open(USER_DATA_PATH,'w')
+    data=str(REFRESH_TIME)+"\n"+data
+    d.write(data)   
+    d.close()
+    os.system("systemctl --user restart AmazonPriceChecker.service")
     l=open(LOG_PATH,'a')
     l.write(str(datetime.now())+" Changed refresh time, new value: "+str(REFRESH_TIME)+"\n")
     l.close()
@@ -125,7 +134,7 @@ def menu():
         elif(choose== 3):
             deleteProduct(products)
         elif(choose == 4):
-            changeRefTime(REFRESH_TIME)
+            changeRefTime()
         elif(choose == 5):
             disableAutoStart()
         elif(choose == 6):
@@ -158,7 +167,6 @@ def checkData(products):
 
 if __name__ == "__main__":
     products=list()
-    REFRESH_TIME=int(60)
     try:
         l=open(LOG_PATH,'w')
         l.write(str(datetime.now())+" Opened application \n")
@@ -192,6 +200,7 @@ if __name__ == "__main__":
         u.close()
     except FileNotFoundError:
         u=open(USER_DATA_PATH,'w')
+        u.write(str(600)+"\n")
         u.write(input("Please insert your name: ")+"\n")
         u.write(input("Please insert your email: ")+"\n")
         u.close()

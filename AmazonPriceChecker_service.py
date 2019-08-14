@@ -36,9 +36,14 @@ def checkData(products):
         products.append(prd)
         line=f.readline()
     f.close()
+    r=open(USER_DATA_PATH,'r')
+    REFRESH_TIME = int(r.readline())
+    r.close()
+    return REFRESH_TIME
+    
+    
 
-def checkPrice(products):
-    REFRESH_TIME=int(60*5)
+def checkPrice(products,REFRESH_TIME):
     global CONNECTED
     while True:
         for p in products:
@@ -129,8 +134,8 @@ if __name__ == "__main__":
         except FileExistsError:
             print("ERROR")
             pass
-    checkData(products)
-    checkPrice(products)
+    REFRESH_TIME = checkData(products)
+    checkPrice(products, REFRESH_TIME)
     l=open(LOG_PATH,"a")
     l.write(str(datetime.now())+" Service closed \n")
     l.close()
